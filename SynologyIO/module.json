@@ -1,0 +1,16 @@
+{
+    "id": "{F308439D-89E4-5486-74B4-44D498C9CD07}",
+    "name": "SynologyIO",
+    "type": 1,
+    "vendor": "Synology",
+    "aliases": [],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}"
+    ],
+    "implemented": [
+        "{59B36CB0-EF4D-D794-FED4-89C69D410CDD}"
+    ],
+    "prefix": "SYNOIO",
+    "url": ""
+}

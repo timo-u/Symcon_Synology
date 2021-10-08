@@ -1,0 +1,16 @@
+{
+    "id": "{D04449C0-D59B-5C08-90C1-CB00EA0F92D1}",
+    "name": "SynologySystem",
+    "type": 3,
+    "vendor": "",
+    "aliases": [],
+    "parentRequirements": [
+        "{59B36CB0-EF4D-D794-FED4-89C69D410CDD}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}"
+    ],
+    "prefix": "SYNOSYS",
+    "url": ""
+}

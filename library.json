@@ -1,0 +1,12 @@
+{
+    "id": "{7AE5F186-7038-1CA2-6991-3CF226938240}",
+    "name": "Symcon_Synology",
+    "author": "Timo-u.de",
+    "url": "http://timo-u.de",
+    "compatibility": {
+        "version": "6.0"
+    },
+    "version": "0.1",
+    "build": 0,
+    "date": 0
+}
