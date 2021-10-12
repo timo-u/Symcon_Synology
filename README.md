@@ -10,3 +10,6 @@ Folgende Module beinhaltet das Symcon_Synology Repository:
 
 - __SynologyStorage__ ([Dokumentation](SynologyStorage))  
 	Die Instanz liest die Paramerter des Storage aus. 
+
+- __SynologySurveillanceStation__ ([Dokumentation](SynologySurveillanceStation))  
+	Die Instanz liest den Zustand der Kameras aus. 
