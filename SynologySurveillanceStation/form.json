@@ -38,7 +38,7 @@
                     "value": 1800
                 },
                 {
-                    "label": "60 minutes",
+                    "label": "30 minutes",
                     "value": 3600
                 }
             ]
@@ -48,7 +48,7 @@
         {
             "type": "Button",
             "label": "Update",
-            "onClick": "echo SYNOSTORAGE_Update($id);"
+            "onClick": "echo SYNOSVS_Update($id);"
         }
     ],
     "status": []

@@ -5,7 +5,16 @@
             "Volume": "Laufwerk",
             "Offline": "benutzt",
             "Online": "Online",
-            "used": "benutzt"
+            "used": "benutzt",
+            "disabled": "deaktiviert",
+			"60 seconds": "60 Sekunden",
+			"2 minutes": "2 Minuten",
+			"5 minutes": "5 Minuten",
+			"10 minutes": "10 Minuten",
+			"15 minutes": "15 Minuten",
+			"30 minutes": "30 Minuten",
+			"60 minutes": "60 Minuten",
+			"Update Interval": "Aktualisierungsintervall"
         }
     }
 }

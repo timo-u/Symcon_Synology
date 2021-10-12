@@ -4,15 +4,24 @@
             "State": "Status",
             "CPU 5 min load": "CPU Last (5 min)",
             "Memory Percent": "Speicherauslastung",
-            "Network Total Rx": "Netzwerk Eingehend",
-            "Network Total Tx": "Netzwerk Ausgehend",
+            "Network Total Rx": "Netzwerk (Eingehend)",
+            "Network Total Tx": "Netzwerk (Ausgehend)",
             "System Crashed": "Systemabsturz",
             "Upgrade Ready": "Aktualisierung verfügbar",
             "Firmware Version": "Firmware Version",
-            "System Temperature": "System-temperatur",
+            "System Temperature": "System-Temperatur",
             "Uptime": "Laufzeit",
             "OK": "OK",
-            "Fault": "Fehler"
+            "Fault": "Fehler",
+            "disabled": "deaktiviert",
+			"60 seconds": "60 Sekunden",
+			"2 minutes": "2 Minuten",
+			"5 minutes": "5 Minuten",
+			"10 minutes": "10 Minuten",
+			"15 minutes": "15 Minuten",
+			"30 minutes": "30 Minuten",
+			"60 minutes": "60 Minuten",
+			"Update Interval": "Aktualisierungsintervall"
         }
     }
 }

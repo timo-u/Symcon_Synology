@@ -1,5 +1,5 @@
 # SynologyIO
-Beschreibung des Moduls.
+Die IO-Instanz stellt die Verbindung zur Synology her und kümmert sich um den Anmeldevorgang.
 
 ### Inhaltsverzeichnis
 
@@ -13,7 +13,7 @@ Beschreibung des Moduls.
 
 ### 1. Funktionsumfang
 
-*
+* Verbindet sich mit der Synology und regelt den Anmeldevorgang
 
 ### 2. Vorraussetzungen
 
@@ -22,7 +22,7 @@ Beschreibung des Moduls.
 ### 3. Software-Installation
 
 * Über den Module Store das 'SynologyIO'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen
+* Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
@@ -33,35 +33,24 @@ __Konfigurationsseite__:
 
 Name     | Beschreibung
 -------- | ------------------
-         |
-         |
+URL                  | Komplette URL bestehend aus Protokoll, IP oder domain und Port ()
+Benutzername         | Benutzername zur Anmeldung an der Synology
+Passwort             | Passwort zur Anmeldung an der Synology
+Server Überprüfen    | Prüft ob das Zertifikat zum Server passt
+Zertifikat Prüfen    | Prüft die Zertifikatskette (Bei selbstsigniertem Zertifikat deaktivieren)
 
 ### 5. Statusvariablen und Profile
 
-Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzelner kann zu Fehlfunktionen führen.
-
-#### Statusvariablen
-
-Name   | Typ     | Beschreibung
------- | ------- | ------------
-       |         |
-       |         |
-
-#### Profile
-
-Name   | Typ
------- | -------
-       |
-       |
+-
 
 ### 6. WebFront
 
-Die Funktionalität, die das Modul im WebFront bietet.
+-
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean SYNOIO_BeispielFunktion(integer $InstanzID);`
-Erklärung der Funktion.
+`boolean SYNOIO_Login(integer $InstanzID,bool $force);`
+Die Variable $force versucht eine Anmeldung, auch wenn ein vorheriges anmelden fehlgeschlagen ist.
 
 Beispiel:
-`SYNOIO_BeispielFunktion(12345);`
+`SYNOIO_Login(12345,true);`

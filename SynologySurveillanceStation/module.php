@@ -1,14 +1,14 @@
 <?php
 
 declare(strict_types=1);
-    class SynologyStorage extends IPSModule
+    class SynologySurveillanceStation extends IPSModule
     {
         public function Create()
         {
             //Never delete this line!
             parent::Create();
             $this->RegisterPropertyInteger('UpdateInterval', 60);
-            $this->RegisterTimer('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000, 'SYNOSTORAGE_Update($_IPS[\'TARGET\']);');
+            $this->RegisterTimer('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000, 'SYNOSVS_Update($_IPS[\'TARGET\']);');
        
             $this->ConnectParent('{F308439D-89E4-5486-74B4-44D498C9CD07}');
         }
@@ -23,8 +23,7 @@ declare(strict_types=1);
         {
             //Never delete this line!
             $this->SetTimerInterval('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000);
-            //  $this->SetReceiveDataFilter(".*E94AC765-F5C1-0E77-7870-83F9D7EBFD6F.*");
-
+           
             $this->CreateVariableProfile();
             $this->Maintain();
             parent::ApplyChanges();
@@ -32,12 +31,12 @@ declare(strict_types=1);
 
         public function Update()
         {
-            $version = $this->GetMaxVersion("SYNO.Storage.CGI.Storage","1");
-           
+            $version = $this->GetMaxVersion("SYNO.SurveillanceStation.Camera","9");
+
             $parameter = array( "subpath" => "/webapi/entry.cgi",
-                                "getparameter"=> array( "api=SYNO.Storage.CGI.Storage",
-                                                        "version=".$version ,
-                                                        "method=load_info")
+                                "getparameter"=> array("api=SYNO.SurveillanceStation.Camera",
+                                                        "version=".$version,
+                                                        "method=List")
                                    );
 
             $returnvalue= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
@@ -47,9 +46,8 @@ declare(strict_types=1);
                 return false;
             }
             $data = json_decode($returnvalue);
-            
-            $this->SendDebug('Update', 'data: '. json_encode($data), 0);
 
+            $this->SendDebug('Update', 'data: '. json_encode($data), 0);
 
             if (property_exists($data, 'apidata')
                     && 	property_exists($data->apidata, 'data')
@@ -58,21 +56,22 @@ declare(strict_types=1);
 
                 $pos = 1;
 
-                foreach ($data->storagePools as &$storagePool) {
-                    $this->MaintainVariable("StoragePool".$this->toIdentName($storagePool->space_path), $this->Translate('StoragePool').": " . $storagePool->desc, 3, "", $pos++, true);
-                    $this->SetValue("StoragePool".$this->toIdentName($storagePool->space_path), $storagePool->status);
-                }
-
-                foreach ($data->volumes as &$volume) {
-                    $this->MaintainVariable("Volume".$this->toIdentName($volume->dev_path), $this->Translate('Volume').": " . $volume->desc, 3, "", $pos++, true);
-                    $this->SetValue("Volume".$this->toIdentName($volume->dev_path), $volume->status);
-                        
-                    $this->MaintainVariable("VolumePercent".$this->toIdentName($volume->dev_path), $this->Translate('Volume').": " . $volume->desc . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
-                    $this->SetValue("VolumePercent".$this->toIdentName($volume->dev_path), ($volume->size->used/$volume->size->total)*100);
+                foreach ($data->cameras as &$camera) {
+                    $this->MaintainVariable("CameraState".$this->toIdentName($camera->id), $this->Translate('Camera').": " . $camera->id . " (".$camera->newName.")", 1, "SYNO_Camera_State", $pos++, true);
+                    $this->SetValue("CameraState".$this->toIdentName($camera->id), $camera->status);
                 }
             }
         }
 
+        private function toIdentName($input)
+        {
+            return preg_replace('/[^A-Za-z0-9\_]/', '', $input);
+        }
+
+        public function ReceiveData($JSONString)
+        {
+            $this->SendDebug('ReceiveData', utf8_decode($JSONString), 0);
+        }
         private function GetMaxVersion(string $api, string $possibleVersions)
         {
             $buffername =  "MaxVersion". preg_replace('/[^A-Za-z0-9\_]/', '', $api);
@@ -125,16 +124,6 @@ declare(strict_types=1);
             $this->SendDebug('GetMaxVersion()', 'Keine entsprechnde Version Gefunden', 0);
             return false;
         }
-
-        private function toIdentName($input)
-        {
-            return preg_replace('/[^A-Za-z0-9\_]/', '', $input);
-        }
-
-        public function ReceiveData($JSONString)
-        {
-            $this->SendDebug('ReceiveData', utf8_decode($JSONString), 0);
-        }
         private function Maintain()
         {
             // $this->MaintainVariable('State', $this->Translate('State'), 0, 'SYNO_Online', 1, true);
@@ -147,25 +136,31 @@ declare(strict_types=1);
         private function CreateVariableProfile()
         {
             $this->SendDebug('RegisterVariableProfiles()', 'RegisterVariableProfiles()', 0);
-
-            if (!IPS_VariableProfileExists('SYNO_Online')) {
-                IPS_CreateVariableProfile('SYNO_Online', 0);
-                IPS_SetVariableProfileAssociation('SYNO_Online', 0, $this->Translate('Offline'), '', 0xFF0000);
-                IPS_SetVariableProfileAssociation('SYNO_Online', 1, $this->Translate('Online'), '', 0x00FF00);
+            // für Entwicklung altes Profil löschen
+            if (IPS_VariableProfileExists('SYNO_Camera_State')) {
+                IPS_DeleteVariableProfile("SYNO_Camera_State");
             }
 
-            if (!IPS_VariableProfileExists('SYNO_Percent')) {
-                IPS_CreateVariableProfile('SYNO_Percent', 2);
-                IPS_SetVariableProfileDigits('SYNO_Percent', 1);
-                IPS_SetVariableProfileText('SYNO_Percent', '', ' %');
-                IPS_SetVariableProfileValues('SYNO_Percent', 0, 100, 0.1);
-            }
-
-            if (!IPS_VariableProfileExists('SYNO_Mbps')) {
-                IPS_CreateVariableProfile('SYNO_Mbps', 2);
-                IPS_SetVariableProfileDigits('SYNO_Mbps', 1);
-                IPS_SetVariableProfileText('SYNO_Mbps', '', ' MBit/s');
-                IPS_SetVariableProfileValues('SYNO_Mbps', 0, 1000, 0.1);
+            if (!IPS_VariableProfileExists('SYNO_Camera_State')) {
+                IPS_CreateVariableProfile('SYNO_Camera_State', 1);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 1, $this->Translate('Normal'), "", 0x00FF00);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 2, $this->Translate('Deleted'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 3, $this->Translate('Disconnected'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 4, $this->Translate('Unavailable'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 5, $this->Translate('Ready'), "", 0xFFFFFF);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 6, $this->Translate('Inaccessible'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 7, $this->Translate('Disabled'), "", 0xFFFFFF);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 8, $this->Translate('Unrecognized'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 9, $this->Translate('Setting'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 10, $this->Translate('Server disconnected'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 11, $this->Translate('Migrating'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 12, $this->Translate('Others'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 13, $this->Translate('Storage removed'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 14, $this->Translate('Stopping'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 15, $this->Translate('Connect hist failed'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 16, $this->Translate('Unauthorized'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 17, $this->Translate('RTSP error'), "", 0xFF0000);
+                IPS_SetVariableProfileAssociation("SYNO_Camera_State", 18, $this->Translate('No video'), "", 0xFF0000);
             }
 
             /*

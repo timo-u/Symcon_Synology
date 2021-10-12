@@ -75,9 +75,11 @@ declare(strict_types=1);
         }
         private function UpdateSystemStatus()
         {
+            $version = $this->GetMaxVersion("SYNO.Core.System.Status","1");
+
             $parameter = array( "subpath" => "/webapi/entry.cgi",
             "getparameter"=> array( "api=SYNO.Core.System.Status",
-                                    "version=1",
+                                    "version=".$version ,
                                     "method=get")
             );
 
@@ -109,9 +111,11 @@ declare(strict_types=1);
         }
         private function UpdateSystemInformation()
         {
+            $version = $this->GetMaxVersion("SYNO.Core.System","1");
+
             $parameter = array( "subpath" => "/webapi/entry.cgi",
             "getparameter"=> array( "api=SYNO.Core.System",
-                                    "version=1",
+                                    "version=".$version,
                                     "method=info")
             );
 
@@ -143,6 +147,58 @@ declare(strict_types=1);
             return false;
         }
 
+        private function GetMaxVersion(string $api, string $possibleVersions)
+        {
+            $buffername =  "MaxVersion". preg_replace('/[^A-Za-z0-9\_]/', '', $api);
+            $version = intval($this->GetBuffer($buffername));
+            if ($version>0) {
+                return  $version;
+            }
+
+
+            $parameter = array( "subpath" => "/webapi/query.cgi",
+                                "getparameter"=> array( "api=SYNO.API.Info",
+                                                        "version=1",
+                                                        "method=query",
+                                                        "query=".$api)
+                                );
+
+
+            $response= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
+
+            if ($response== false) {
+                return false;
+            }
+            $data = json_decode($response);
+
+            if (property_exists($data, 'apidata')
+                    && 	property_exists($data->apidata, 'data')
+                    && 	property_exists($data, 'apiparameter')) {
+                $data = $data->apidata->data;
+                $max = $data->{$api}->maxVersion;
+                $min = $data->{$api}->minVersion;
+                $this->SendDebug('GetMaxVersion()', 'Api'.$api, 0);
+                $this->SendDebug('GetMaxVersion()', 'Max'.$max, 0);
+                $this->SendDebug('GetMaxVersion()', 'Min'.$min, 0);
+
+                $this->SendDebug('GetMaxVersion()', 'possibleVersions string: '.$possibleVersions, 0);
+                $possibleVersions =explode(',', $possibleVersions);
+                
+                arsort($possibleVersions);
+                
+                foreach ($possibleVersions as &$version) {
+                    $this->SendDebug('GetMaxVersion()', 'Version '.$version, 0);
+
+                    $versionint = intval($version);
+                    if ($versionint<=$max && $versionint>=$min) {
+                        $this->SetBuffer($buffername, $versionint);
+                        return $versionint;
+                    }
+                }
+            }
+            $this->SendDebug('GetMaxVersion()', 'Keine entsprechnde Version Gefunden', 0);
+            return false;
+        }
 
         public function ReceiveData($JSONString)
         {

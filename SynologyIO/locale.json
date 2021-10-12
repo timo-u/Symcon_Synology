@@ -2,9 +2,10 @@
     "translations": {
         "de": {
             "Active": "Aktiv",
-            "Connection failed": "ÜberVerbindung fehlgeschlagensetzung",
+            "Connection failed": "Verbindung fehlgeschlagen",
             "Authentication failed": "Authentifizierung fehlgeschlagen",
             "Login": "Einloggen",
+            "Logout": "Ausloggen",
             "URL": "URL",
             "Username": "Benutzername",
             "Password": "Passwort",

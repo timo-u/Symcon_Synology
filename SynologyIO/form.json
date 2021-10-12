@@ -37,6 +37,11 @@
 			"type": "Button",
 			"label": "Login",
 			"onClick": "echo SYNOIO_Login($id,true);"
+		},
+		{
+			"type": "Button",
+			"label": "Logout",
+			"onClick": "echo SYNOIO_Logout($id);"
 		}
 	],
 	"status": [
