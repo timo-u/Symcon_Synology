@@ -1,5 +1,59 @@
 {
-    "elements": [],
-    "actions": [],
-    "status": []
+	"elements": [
+		{
+			"type": "CheckBox",
+			"name": "Active",
+			"caption": "Aktiv"
+		},
+		{
+			"type": "ValidationTextBox",
+			"name": "Url",
+			"caption": "URL",
+			"value": "https://synology.local:5001"
+		},
+		{
+			"type": "ValidationTextBox",
+			"name": "Username",
+			"caption": "Username"
+		},
+		{
+			"type": "PasswordTextBox",
+			"name": "Password",
+			"caption": "Password"
+		},
+		{
+			"type": "CheckBox",
+			"name": "VerifyHost",
+			"caption": "Verify Host"
+		},
+		{
+			"type": "CheckBox",
+			"name": "VerifyPeer",
+			"caption": "Verify Peer"
+		}
+	],
+	"actions": [
+		{
+			"type": "Button",
+			"label": "Login",
+			"onClick": "echo SYNOIO_Login($id,true);"
+		}
+	],
+	"status": [
+		{
+			"code": 102,
+			"icon": "active",
+			"caption": "Active"
+		},
+		{
+			"code": 201,
+			"icon": "error",
+			"caption": "Connection failed"
+		},
+		{
+			"code": 202,
+			"icon": "error",
+			"caption": "Authentication failed"
+		}
+	]
 }

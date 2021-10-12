@@ -2,8 +2,8 @@
     "id": "{D04449C0-D59B-5C08-90C1-CB00EA0F92D1}",
     "name": "SynologySystem",
     "type": 3,
-    "vendor": "",
-    "aliases": [],
+    "vendor": "Synology",
+    "aliases": ["Synology System"],
     "parentRequirements": [
         "{59B36CB0-EF4D-D794-FED4-89C69D410CDD}"
     ],

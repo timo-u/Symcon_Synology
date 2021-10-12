@@ -1,8 +1,18 @@
 {
     "translations": {
         "de": {
-            "Translation 1": "Übersetzung 1",
-            "Translation 2": "Übersetzung 2"
+            "State": "Status",
+            "CPU 5 min load": "CPU Last (5 min)",
+            "Memory Percent": "Speicherauslastung",
+            "Network Total Rx": "Netzwerk Eingehend",
+            "Network Total Tx": "Netzwerk Ausgehend",
+            "System Crashed": "Systemabsturz",
+            "Upgrade Ready": "Aktualisierung verfügbar",
+            "Firmware Version": "Firmware Version",
+            "System Temperature": "System-temperatur",
+            "Uptime": "Laufzeit",
+            "OK": "OK",
+            "Fault": "Fehler"
         }
     }
 }

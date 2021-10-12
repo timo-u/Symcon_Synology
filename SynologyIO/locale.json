@@ -1,8 +1,15 @@
 {
     "translations": {
         "de": {
-            "Translation 1": "Übersetzung 1",
-            "Translation 2": "Übersetzung 2"
+            "Active": "Aktiv",
+            "Connection failed": "ÜberVerbindung fehlgeschlagensetzung",
+            "Authentication failed": "Authentifizierung fehlgeschlagen",
+            "Login": "Einloggen",
+            "URL": "URL",
+            "Username": "Benutzername",
+            "Password": "Passwort",
+            "Verify Host": "Server Überprüfen",
+            "Verify Peer": "Zertifikat Prüfen"
         }
     }
 }
