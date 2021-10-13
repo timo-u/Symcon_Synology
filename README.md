@@ -13,3 +13,13 @@ Folgende Module beinhaltet das Symcon_Synology Repository:
 
 - __SynologySurveillanceStation__ ([Dokumentation](SynologySurveillanceStation))  
 	Die Instanz liest den Zustand der Kameras aus. 
+
+### Vorraussetzungen
+
+- IP-Symcon ab Version 6.0
+- Synology NAS 
+
+###  Software-Installation
+
+* Über den Module Store das 'Synology'-Modul installieren.
+* Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology

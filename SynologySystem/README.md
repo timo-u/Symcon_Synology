@@ -1,5 +1,5 @@
 # SynologySystem
-Beschreibung des Moduls.
+Auslesen der Sytemparameter aus einem Synology NAS.
 
 ### Inhaltsverzeichnis
 
@@ -13,7 +13,16 @@ Beschreibung des Moduls.
 
 ### 1. Funktionsumfang
 
-*
+* Anzeige von Verbindungszustand
+* Anzeige der CPU-Last (5 min)
+* Anzeige der Laufzeit in Stunden
+* Anzeige der Systemtemperatur
+* Anzeige der Speicherauslastung
+* Anzeige des eingehenden (gesamten) Netzwerkverkehrs
+* Anzeige des ausgehenden (gesamten) Netzwerkverkehrs
+* Anzeige des Zustands des NAS (Systemabsturz)
+* Anzeige der aktuellen Firmwareversion
+* Anzeige verfügbarer Aktualisierungen
 
 ### 2. Vorraussetzungen
 
@@ -21,20 +30,19 @@ Beschreibung des Moduls.
 
 ### 3. Software-Installation
 
-* Über den Module Store das 'SynologySystem'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen
+* Über den Module Store das 'Synology'-Modul installieren.
+* Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'SynologySystem'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'Synology'-Modul mithilfe des Schnellfilters gefunden werden.  
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
 
 Name     | Beschreibung
 -------- | ------------------
-         |
-         |
+ Aktualisierungsintervall   | Intervall für automatische Aktualisierungen 
 
 ### 5. Statusvariablen und Profile
 
@@ -44,24 +52,38 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 Name   | Typ     | Beschreibung
 ------ | ------- | ------------
-       |         |
-       |         |
+Status               | boolean | Erreichbarkeit des Systems 
+CPU Last (5min)      | float   | CPU-Last der letzten 5 min
+Laufzeit             | integer | Laufzeit in Stunden
+System-Temperatur    | integer | Systemtemperatur (CPU)
+Speicherauslastung   | float   | Prozentuale Belegung des Arbeitsspeichers
+Netzwerk (Eingehend) | float   | Eingehender Netzwerkverkehr aller Netzwerkschnittstellen
+Netzwerk (Ausgehend) | float   | Ausgehender Netzwerkverkehr aller Netzwerkschnittstellen
+Systemabsturz        | boolean | Meldung für Systemabsturz
+Firmware Version     | string  | Installierte Firmwareversion
+Aktualisierung verfügbar| boolean | Verfügbares Update
+
 
 #### Profile
 
 Name   | Typ
 ------ | -------
-       |
-       |
+SYNO_Online          | boolean
+SYNO_Percent         | float
+SYNO_Mbps            | float
+SYNO_Fault           | boolean
+SYNO_Temperature     | integer
+SYNO_Hour            | integer
 
 ### 6. WebFront
 
-Die Funktionalität, die das Modul im WebFront bietet.
+
+Anzeige der Statusvariablen im Webfront.
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean SYNOSYS_BeispielFunktion(integer $InstanzID);`
-Erklärung der Funktion.
+`boolean SYNOSYS_Update(integer $InstanzID);`
+Manuelles Akktualisieren der Instanz. 
 
 Beispiel:
-`SYNOSYS_BeispielFunktion(12345);`
+`SYNOSYS_Update(12345);`

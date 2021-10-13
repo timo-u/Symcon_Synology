@@ -1,5 +1,5 @@
 # SynologySurveillanceStation
-Beschreibung des Moduls.
+Liefert den Zustand der Kameras der SurveillanceStation
 
 ### Inhaltsverzeichnis
 
@@ -13,7 +13,7 @@ Beschreibung des Moduls.
 
 ### 1. Funktionsumfang
 
-*
+* Liefert den Zustand der Kameras der SurveillanceStation
 
 ### 2. Vorraussetzungen
 
@@ -21,20 +21,20 @@ Beschreibung des Moduls.
 
 ### 3. Software-Installation
 
-* Über den Module Store das 'SynologySystem'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen
+* Über den Module Store das 'Synology'-Modul installieren.
+* Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'SynologySystem'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'Synology'-Modul mithilfe des Schnellfilters gefunden werden.  
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
 
 Name     | Beschreibung
 -------- | ------------------
-         |
-         |
+ Aktualisierungsintervall   | Intervall für automatische Aktualisierungen 
+
 
 ### 5. Statusvariablen und Profile
 
@@ -44,24 +44,24 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 Name   | Typ     | Beschreibung
 ------ | ------- | ------------
-       |         |
-       |         |
+Kamera: NUMMER (NAME)          | integer | Zustand der Kamera
+
 
 #### Profile
 
 Name   | Typ
 ------ | -------
-       |
-       |
+SYNO_Camera_State       |integer
+
 
 ### 6. WebFront
 
-Die Funktionalität, die das Modul im WebFront bietet.
+Anzeige der Statusvariablen im Webfront.
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean SYNOSYS_BeispielFunktion(integer $InstanzID);`
-Erklärung der Funktion.
+`boolean SYNOSYS_Update(integer $InstanzID);`
+Manuelles Akktualisieren der Instanz. 
 
 Beispiel:
-`SYNOSYS_BeispielFunktion(12345);`
+`SYNOSYS_Update(12345);`

@@ -11,6 +11,7 @@ declare(strict_types=1);
             $this->RegisterTimer('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000, 'SYNOSVS_Update($_IPS[\'TARGET\']);');
        
             $this->ConnectParent('{F308439D-89E4-5486-74B4-44D498C9CD07}');
+            $this->CreateVariableProfile();
         }
 
         public function Destroy()
@@ -21,17 +22,15 @@ declare(strict_types=1);
 
         public function ApplyChanges()
         {
-            //Never delete this line!
             $this->SetTimerInterval('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000);
-           
-            $this->CreateVariableProfile();
-            $this->Maintain();
+                
+            //Never delete this line!
             parent::ApplyChanges();
         }
 
         public function Update()
         {
-            $version = $this->GetMaxVersion("SYNO.SurveillanceStation.Camera","9");
+            $version = $this->GetMaxVersion("SYNO.SurveillanceStation.Camera", "9");
 
             $parameter = array( "subpath" => "/webapi/entry.cgi",
                                 "getparameter"=> array("api=SYNO.SurveillanceStation.Camera",
@@ -109,14 +108,13 @@ declare(strict_types=1);
                 $this->SendDebug('GetMaxVersion()', 'possibleVersions string: '.$possibleVersions, 0);
                 $possibleVersions =explode(',', $possibleVersions);
                 
-                arsort($possibleVersions);
+                arsort($possibleVersions); // Höchste Version bevorzugen
                 
                 foreach ($possibleVersions as &$version) {
-                    $this->SendDebug('GetMaxVersion()', 'Version '.$version, 0);
-
                     $versionint = intval($version);
                     if ($versionint<=$max && $versionint>=$min) {
                         $this->SetBuffer($buffername, $versionint);
+                        $this->SendDebug('GetMaxVersion()', 'Version ausgewählt: '.$version, 0);
                         return $versionint;
                     }
                 }
@@ -124,23 +122,12 @@ declare(strict_types=1);
             $this->SendDebug('GetMaxVersion()', 'Keine entsprechnde Version Gefunden', 0);
             return false;
         }
-        private function Maintain()
-        {
-            // $this->MaintainVariable('State', $this->Translate('State'), 0, 'SYNO_Online', 1, true);
-          //  $this->MaintainVariable('CpuLoad5Min', $this->Translate('CPU 5 min load'), 2, 'SYNO_Percent', 2, true);
-           // $this->MaintainVariable('MemoryPercent', $this->Translate('MemoryPercent'), 2, 'SYNO_Percent', 2, true);
-           // $this->MaintainVariable('NetworkTotalRx', $this->Translate('NetworkTotalRx'), 2, 'SYNO_Mbps', 2, true);
-           // $this->MaintainVariable('NetworkTotalTx', $this->Translate('NetworkTotalTx'), 2, 'SYNO_Mbps', 2, true);
-        }
+
      
         private function CreateVariableProfile()
         {
             $this->SendDebug('RegisterVariableProfiles()', 'RegisterVariableProfiles()', 0);
-            // für Entwicklung altes Profil löschen
-            if (IPS_VariableProfileExists('SYNO_Camera_State')) {
-                IPS_DeleteVariableProfile("SYNO_Camera_State");
-            }
-
+      
             if (!IPS_VariableProfileExists('SYNO_Camera_State')) {
                 IPS_CreateVariableProfile('SYNO_Camera_State', 1);
                 IPS_SetVariableProfileAssociation("SYNO_Camera_State", 1, $this->Translate('Normal'), "", 0x00FF00);
@@ -162,20 +149,5 @@ declare(strict_types=1);
                 IPS_SetVariableProfileAssociation("SYNO_Camera_State", 17, $this->Translate('RTSP error'), "", 0xFF0000);
                 IPS_SetVariableProfileAssociation("SYNO_Camera_State", 18, $this->Translate('No video'), "", 0xFF0000);
             }
-
-            /*
-            if (!IPS_VariableProfileExists('TTN_dBm_RSSI')) {
-                IPS_CreateVariableProfile('TTN_dBm_RSSI', 1);
-                IPS_SetVariableProfileText('TTN_dBm_RSSI', '', ' dBm');
-                IPS_SetVariableProfileValues('TTN_dBm_RSSI', -150, 0, 1);
-            }
-
-            if (!IPS_VariableProfileExists('TTN_dB_SNR')) {
-                IPS_CreateVariableProfile('TTN_dB_SNR', 2);
-                IPS_SetVariableProfileDigits('TTN_dB_SNR', 1);
-                IPS_SetVariableProfileText('TTN_dB_SNR', '', ' dB');
-                IPS_SetVariableProfileValues('TTN_dB_SNR', -25, 15, 0.1);
-            }
-            */
         }
     }

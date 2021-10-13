@@ -21,12 +21,12 @@ Die IO-Instanz stellt die Verbindung zur Synology her und kümmert sich um den A
 
 ### 3. Software-Installation
 
-* Über den Module Store das 'SynologyIO'-Modul installieren.
+* Über den Module Store das 'Synology'-Modul installieren.
 * Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'SynologyIO'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'Synology'-Modul mithilfe des Schnellfilters gefunden werden.  
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
@@ -41,11 +41,11 @@ Zertifikat Prüfen    | Prüft die Zertifikatskette (Bei selbstsigniertem Zertif
 
 ### 5. Statusvariablen und Profile
 
--
+- keine
 
 ### 6. WebFront
 
--
+- keine
 
 ### 7. PHP-Befehlsreferenz
 

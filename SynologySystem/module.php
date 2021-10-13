@@ -11,6 +11,7 @@ declare(strict_types=1);
             $this->RegisterTimer('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000, 'SYNOSYS_Update($_IPS[\'TARGET\']);');
        
             $this->ConnectParent('{F308439D-89E4-5486-74B4-44D498C9CD07}');
+            $this->CreateVariableProfile();
         }
 
         public function Destroy()
@@ -21,17 +22,15 @@ declare(strict_types=1);
 
         public function ApplyChanges()
         {
-            //Never delete this line!
             $this->SetTimerInterval('Update', $this->ReadPropertyInteger('UpdateInterval') * 1000);
-            $this->SetReceiveDataFilter(".*D04449C0-D59B-5C08-90C1-CB00EA0F92D1.*");
-
-            $this->CreateVariableProfile();
             $this->Maintain();
+            //Never delete this line!
             parent::ApplyChanges();
         }
 
         public function Update()
         {
+            $this->Maintain();
             $this->UpdateUtilization();
             $this->UpdateSystemStatus();
             $this->UpdateSystemInformation();
@@ -40,9 +39,11 @@ declare(strict_types=1);
 
         private function UpdateUtilization()
         {
+            $version = $this->GetMaxVersion("SYNO.Core.System.Utilization", "1");
+
             $parameter = array( "subpath" => "/webapi/entry.cgi",
             "getparameter"=> array( "api=SYNO.Core.System.Utilization",
-                                    "version=1",
+                                    "version=".$version,
                                     "method=get")
             );
 
@@ -75,7 +76,7 @@ declare(strict_types=1);
         }
         private function UpdateSystemStatus()
         {
-            $version = $this->GetMaxVersion("SYNO.Core.System.Status","1");
+            $version = $this->GetMaxVersion("SYNO.Core.System.Status", "1");
 
             $parameter = array( "subpath" => "/webapi/entry.cgi",
             "getparameter"=> array( "api=SYNO.Core.System.Status",
@@ -111,7 +112,7 @@ declare(strict_types=1);
         }
         private function UpdateSystemInformation()
         {
-            $version = $this->GetMaxVersion("SYNO.Core.System","1");
+            $version = $this->GetMaxVersion("SYNO.Core.System", "1,2,3");
 
             $parameter = array( "subpath" => "/webapi/entry.cgi",
             "getparameter"=> array( "api=SYNO.Core.System",
@@ -214,11 +215,11 @@ declare(strict_types=1);
             $this->MaintainVariable('NetworkTotalTx', $this->Translate('Network Total Tx'), 2, 'SYNO_Mbps', 5, true);
             //UpdateSystemStatus
             $this->MaintainVariable('SystemCrashed', $this->Translate('System Crashed'), 0, 'SYNO_Fault', 10, true);
-            $this->MaintainVariable('UpgradeReady', $this->Translate('Upgrade Ready'), 0, 'SYNO_Fault', 41, true);
+            $this->MaintainVariable('UpgradeReady', $this->Translate('Upgrade Ready'), 0, '~Alert', 41, true);
             //UpdateSystemInformation
             $this->MaintainVariable("FirmwareVersion", $this->Translate('Firmware Version'), 3, "", 40, true);
-            $this->MaintainVariable('SystemTemperature', $this->Translate('System Temperature'), 1, 'SYNO_Temperature', 2, true);
-            $this->MaintainVariable('Uptime', $this->Translate('Uptime'), 1, 'SYNO_Hour', 2, true);
+            $this->MaintainVariable('SystemTemperature', $this->Translate('System Temperature'), 1, 'SYNO_Temperature', 6, true);
+            $this->MaintainVariable('Uptime', $this->Translate('Uptime'), 1, 'SYNO_Hour', 7, true);
         }
 
 

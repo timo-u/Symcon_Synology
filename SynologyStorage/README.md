@@ -1,5 +1,5 @@
 # SynologyStorage
-Beschreibung des Moduls.
+Die Instanz liest den Zustand der Speicherpools und Volumes aus. Für jedes Volume wird außerdem die Belegung in Prozent angegeben.
 
 ### Inhaltsverzeichnis
 
@@ -13,7 +13,9 @@ Beschreibung des Moduls.
 
 ### 1. Funktionsumfang
 
-*
+* Ausgabe des Zustands der Speicherpools
+* Ausgabe des Zustands der Volumes
+* Ausgabe der prozentualen Belegung der Volumes
 
 ### 2. Vorraussetzungen
 
@@ -21,20 +23,20 @@ Beschreibung des Moduls.
 
 ### 3. Software-Installation
 
-* Über den Module Store das 'SynologyStorage'-Modul installieren.
-* Alternativ über das Module Control folgende URL hinzufügen
+* Über den Module Store das 'Synology'-Modul installieren.
+* Alternativ über das Module Control folgende URL hinzufügen: https://github.com/timo-u/Symcon_Synology
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
- Unter 'Instanz hinzufügen' kann das 'SynologyStorage'-Modul mithilfe des Schnellfilters gefunden werden.  
+ Unter 'Instanz hinzufügen' kann das 'Synology'-Modul mithilfe des Schnellfilters gefunden werden.  
 	- Weitere Informationen zum Hinzufügen von Instanzen in der [Dokumentation der Instanzen](https://www.symcon.de/service/dokumentation/konzepte/instanzen/#Instanz_hinzufügen)
 
 __Konfigurationsseite__:
 
 Name     | Beschreibung
 -------- | ------------------
-         |
-         |
+ Aktualisierungsintervall   | Intervall für automatische Aktualisierungen 
+
 
 ### 5. Statusvariablen und Profile
 
@@ -44,24 +46,25 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 Name   | Typ     | Beschreibung
 ------ | ------- | ------------
-       |         |
-       |         |
+Speicherpool: NAME          | string | Zustand des Speicherpools
+Volume: NAME                | string | Zustand des Volumes
+Volume: NAME (benutzt)      | float  | Prozentuale Belegung des Volumes
 
 #### Profile
 
 Name   | Typ
 ------ | -------
-       |
-       |
+SYNO_Percent       | float
+
 
 ### 6. WebFront
 
-Die Funktionalität, die das Modul im WebFront bietet.
+Anzeige der Statusvariablen im Webfront.
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean SYNOSTORAGE_BeispielFunktion(integer $InstanzID);`
-Erklärung der Funktion.
+`boolean SYNOSTORAGE_Update(integer $InstanzID);`
+Manuelles Akktualisieren der Instanz. 
 
 Beispiel:
-`SYNOSTORAGE_BeispielFunktion(12345);`
+`SYNOSTORAGE_Update(12345);`
