@@ -27,6 +27,6 @@ Folgende Module beinhaltet das Symcon_Synology Repository:
 ###  Feedback
 
 Ich freue mich über Feedback zu dem Modul.
-[Github Issues](https://github.com/timo-u/Symcon_Synology/issues)
-[Symcon Forum](https://community.symcon.de/t/modul-synology/126449)
+* [Github Issues](https://github.com/timo-u/Symcon_Synology/issues)
+* [Symcon Forum](https://community.symcon.de/t/modul-synology/126449)
 
