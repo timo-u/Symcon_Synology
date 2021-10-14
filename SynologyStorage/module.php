@@ -56,16 +56,28 @@ declare(strict_types=1);
                 $pos = 1;
 
                 foreach ($data->storagePools as &$storagePool) {
-                    $this->MaintainVariable("StoragePool".$this->toIdentName($storagePool->space_path), $this->Translate('StoragePool').": " . $storagePool->desc, 3, "", $pos++, true);
-                    $this->SetValue("StoragePool".$this->toIdentName($storagePool->space_path), $storagePool->status);
+                    if (property_exists($storagePool, 'dev_path')) {
+                        $ident ="StoragePool".$this->toIdentName($storagePool->space_path);
+                    } else {
+                        $ident ="StoragePool".$this->toIdentName($storagePool->id);
+                    }
+
+                    $this->MaintainVariable($ident, $this->Translate('StoragePool').": " . $storagePool->desc, 3, "", $pos++, true);
+                    $this->SetValue($ident, $storagePool->status);
                 }
 
                 foreach ($data->volumes as &$volume) {
-                    $this->MaintainVariable("Volume".$this->toIdentName($volume->dev_path), $this->Translate('Volume').": " . $volume->desc, 3, "", $pos++, true);
-                    $this->SetValue("Volume".$this->toIdentName($volume->dev_path), $volume->status);
-                        
-                    $this->MaintainVariable("VolumePercent".$this->toIdentName($volume->dev_path), $this->Translate('Volume').": " . $volume->desc . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
-                    $this->SetValue("VolumePercent".$this->toIdentName($volume->dev_path), ($volume->size->used/$volume->size->total)*100);
+                    if (property_exists($volume, 'dev_path')) {
+                        $ident =$this->toIdentName($volume->dev_path);
+                    } else {
+                        $ident =$this->toIdentName($volume->id);
+                    }
+
+                    $this->MaintainVariable("Volume".$ident, $this->Translate('Volume').": " . $volume->desc, 3, "", $pos++, true);
+                    $this->SetValue("Volume".$ident, $volume->status);
+                    
+                    $this->MaintainVariable("VolumePercent".$ident, $this->Translate('Volume').": " . $volume->desc . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
+                    $this->SetValue("VolumePercent".$ident, ($volume->size->used/$volume->size->total)*100);
                 }
             }
         }
