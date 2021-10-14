@@ -90,6 +90,8 @@ declare(strict_types=1);
 
             $response= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
 
+            $this->SendDebug('GetMaxVersion()_Data',  $response, 0);           
+
             if ($response== false) {
                 return false;
             }
@@ -99,11 +101,17 @@ declare(strict_types=1);
                     && 	property_exists($data->apidata, 'data')
                     && 	property_exists($data, 'apiparameter')) {
                 $data = $data->apidata->data;
+                if(!property_exists($data, $api))
+                {
+                    $this->SendDebug('GetMaxVersion()', 'Informationen zur API '.$api . ' sind nicht in der Antwort enthalten. Der Vorgang wird abgebrochen', 0);
+                    return false; 
+                }
+
                 $max = $data->{$api}->maxVersion;
                 $min = $data->{$api}->minVersion;
-                $this->SendDebug('GetMaxVersion()', 'Api'.$api, 0);
-                $this->SendDebug('GetMaxVersion()', 'Max'.$max, 0);
-                $this->SendDebug('GetMaxVersion()', 'Min'.$min, 0);
+                $this->SendDebug('GetMaxVersion()', 'Api Name: '.$api, 0);
+                $this->SendDebug('GetMaxVersion()', 'Api Max Version: '.$max, 0);
+                $this->SendDebug('GetMaxVersion()', 'Api Min Version: '.$min, 0);
 
                 $this->SendDebug('GetMaxVersion()', 'possibleVersions string: '.$possibleVersions, 0);
                 $possibleVersions =explode(',', $possibleVersions);
