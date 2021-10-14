@@ -55,29 +55,46 @@ declare(strict_types=1);
 
                 $pos = 1;
 
-                foreach ($data->storagePools as &$storagePool) {
-                    if (property_exists($storagePool, 'dev_path')) {
-                        $ident ="StoragePool".$this->toIdentName($storagePool->space_path);
-                    } else {
-                        $ident ="StoragePool".$this->toIdentName($storagePool->id);
+                if (property_exists($data, 'storagePools')) {
+                    foreach ($data->storagePools as &$storagePool) {
+                        if (property_exists($storagePool, 'space_path')) {
+                            $ident ="StoragePool".$this->toIdentName($storagePool->space_path);
+                        } else {
+                            $ident ="StoragePool".$this->toIdentName($storagePool->id);
+                        }
+                        if (property_exists($storagePool, 'desc')) {
+                            $description =$storagePool->desc;
+                        } else {
+                            $description =$storagePool->id;
+                        }
+                        $this->MaintainVariable($ident, $this->Translate('StoragePool').": " . $description, 3, "", $pos++, true);
+                        $this->SetValue($ident, $storagePool->status);
                     }
-
-                    $this->MaintainVariable($ident, $this->Translate('StoragePool').": " . $storagePool->desc, 3, "", $pos++, true);
-                    $this->SetValue($ident, $storagePool->status);
                 }
 
-                foreach ($data->volumes as &$volume) {
-                    if (property_exists($volume, 'dev_path')) {
-                        $ident =$this->toIdentName($volume->dev_path);
-                    } else {
-                        $ident =$this->toIdentName($volume->id);
-                    }
+                if (property_exists($data, 'volumes')) {
+                    foreach ($data->volumes as &$volume) {
+                        if (property_exists($volume, 'dev_path')) {
+                            $ident =$this->toIdentName($volume->dev_path);
+                        } elseif (property_exists($volume, 'vol_path')) {
+                            $ident =$this->toIdentName($volume->vol_path);
+                        } else {
+                            $ident =$this->toIdentName($volume->id);
+                        }
+                        if (property_exists($volume, 'desc')) {
+                            $description =$volume->desc;
+                        } elseif (property_exists($volume, 'vol_desc')) {
+                            $description =$volume->vol_desc;
+                        } else {
+                            $description =$this->toIdentName($volume->id);
+                        }
 
-                    $this->MaintainVariable("Volume".$ident, $this->Translate('Volume').": " . $volume->desc, 3, "", $pos++, true);
-                    $this->SetValue("Volume".$ident, $volume->status);
+                        $this->MaintainVariable("Volume".$ident, $this->Translate('Volume').": " . $description, 3, "", $pos++, true);
+                        $this->SetValue("Volume".$ident, $volume->status);
                     
-                    $this->MaintainVariable("VolumePercent".$ident, $this->Translate('Volume').": " . $volume->desc . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
-                    $this->SetValue("VolumePercent".$ident, ($volume->size->used/$volume->size->total)*100);
+                        $this->MaintainVariable("VolumePercent".$ident, $this->Translate('Volume').": " . $description . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
+                        $this->SetValue("VolumePercent".$ident, ($volume->size->used/$volume->size->total)*100);
+                    }
                 }
             }
         }
