@@ -8,7 +8,8 @@ declare(strict_types=1);
             $this->RegisterPropertyString('Url', '');
             $this->RegisterPropertyString('Username', '');
             $this->RegisterPropertyString('Password', '');
-            
+            $this->RegisterPropertyString('TwoFactorAuthCode', '');
+
             $this->RegisterPropertyBoolean('Active', false);
 
             $this->RegisterPropertyBoolean('VerifyHost', true);
@@ -43,6 +44,7 @@ declare(strict_types=1);
             $this->SendDataToChildren(json_encode(['DataID' => '{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}', 'Buffer' => $Text]));
         }
 
+
         public function Login(bool $force = false)
         {
             if (!$this->ReadPropertyBoolean('Active')) {
@@ -58,7 +60,15 @@ declare(strict_types=1);
             $url = $this->ReadPropertyString('Url');
 
             $version = $this->GetMaxVersion("SYNO.API.Auth", "3,4,5,6");
+            $otp="";
+            if ($this->ReadPropertyString('TwoFactorAuthCode')!="") {
+                $code = $this->Create2FACode();
+                if ($code) {
+                    $otp="&otp_code=".$code ;
+                }
+            }
             
+
             if ($this->ReadPropertyBoolean('VerifyHost')) {
                 $verifyhost = 2;
             } else {
@@ -68,7 +78,7 @@ declare(strict_types=1);
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                    CURLOPT_URL => $url .'/webapi/auth.cgi?api=SYNO.API.Auth&version='.$version.'&method=login&account='.$username.'&passwd='.$password.'&format=sid&session=symcon',
+                    CURLOPT_URL => $url .'/webapi/auth.cgi?api=SYNO.API.Auth&version='.$version.'&method=login&account='.$username.'&passwd='.$password.'&format=sid&session=symcon'.$otp,
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => '',
                     CURLOPT_MAXREDIRS => 10,
@@ -102,16 +112,87 @@ declare(strict_types=1);
                 $this->SetStatus(102);
                 $this->SetBuffer('SessionId', $data->data->sid);
             } else {
+                $this->SendDebug('Login()', 'Authentication failed', 0);
                 if ($data->error->code==400) {
-                    $this->SendDebug('Login()', 'Authentication failed', 0);
-                    $this->SetBuffer('Authentication', 'failed');
+                    $this->SendDebug('Login()', 'No such account or incorrect password.', 0);
                 }
+                if ($data->error->code==401) {
+                    $this->SendDebug('Login()', 'Disabled account', 0);
+                }
+                if ($data->error->code==402) {
+                    $this->SendDebug('Login()', 'Denied permission', 0);
+                }
+                if ($data->error->code==403) {
+                    $this->SendDebug('Login()', '2-factor authentication code required.', 0);
+                }
+                if ($data->error->code==404) {
+                    $this->SendDebug('Login()', 'Failed to authenticate 2-factor authentication code.', 0);
+                }
+                if ($data->error->code==406) {
+                    $this->SendDebug('Login()', 'Enforce to authenticate with 2-factor authentication code', 0);
+                }
+                if ($data->error->code==407) {
+                    $this->SendDebug('Login()', 'Blocked IP source', 0);
+                }
+                if ($data->error->code==408) {
+                    $this->SendDebug('Login()', 'Expired password cannot change', 0);
+                }
+                if ($data->error->code==409) {
+                    $this->SendDebug('Login()', 'Expired password', 0);
+                }
+                if ($data->error->code==410) {
+                    $this->SendDebug('Login()', 'Password must be changed', 0);
+                }
+                $this->SetBuffer('Authentication', 'failed');
                 $this->SetStatus(202); // Authentication failed
             }
             
             return $success;
         }
 
+        public function Create2FACode()
+        {
+            $code = str_replace(' ', '', $this->ReadPropertyString('TwoFactorAuthCode'));
+            if ($code =="") {
+                $this->SendDebug('Create2FACode', 'Kein Secret eingegeben. Es wurde kein 2FA Code erzeugt', 0);
+                return false;
+            }
+            $timestamp = floor(microtime(true) / 30);
+            
+            $lut = [ 'A' => 0, 'B' => 1,'C' => 2,'D' => 3, 'E' => 4,'F' => 5,'G' => 6,'H' => 7, 'I' => 8,  'J' => 9, 'K' => 10,'L' => 11,'M' => 12,'N' => 13,
+            'O' => 14,'P' => 15, 'Q' => 16, 'R' => 17, 'S' => 18, 'T' => 19, 'U' => 20, 'V' => 21,'W' => 22,'X' => 23,'Y' => 24,'Z' => 25,'2' => 26,'3' => 27,
+            '4' => 28,'5' => 29,'6' => 30,'7' => 31];
+            // Decode Base32 Seed
+            $b32 = strtoupper($code);
+            $n = $j = 0;
+            $key = '';
+            if (!preg_match('/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]+$/', $b32, $match)) {
+                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
+                $this->SetStatus(203);
+                return false;
+            }
+            for ($i = 0, $iMax = strlen($b32); $i < $iMax; $i++) {
+                $n <<= 5;
+                $n += $lut[$b32[$i]];
+                $j += 5;
+                if ($j >= 8) {
+                    $j -= 8;
+                    $key .= chr(($n & (0xFF << $j)) >> $j);
+                }
+            }
+            
+            if (strlen($key) < 8) {
+                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
+                $this->SetStatus(203);
+                return null;
+            }
+            
+            $h = hash_hmac('sha1', pack('N*', 0) . pack('N*', $timestamp), $key, true);  
+            $o = ord($h[19]) & 0xf;
+            $ota_code = (((ord($h[$o + 0]) & 0x7f) << 24) | ((ord($h[$o + 1]) & 0xff) << 16) | ((ord($h[$o + 2]) & 0xff) << 8) | (ord($h[$o + 3]) & 0xff)) % (10 ** 6);
+            $this->SendDebug('Create2FACode', "TOTP-Code: ".$ota_code, 0);
+            return  $ota_code;
+        }
 
         public function GetMaxVersion(string $api, string $possibleVersions)
         {

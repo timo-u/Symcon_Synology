@@ -36,6 +36,7 @@ Name     | Beschreibung
 URL                  | Komplette URL bestehend aus Protokoll, IP oder domain und Port ()
 Benutzername         | Benutzername zur Anmeldung an der Synology
 Passwort             | Passwort zur Anmeldung an der Synology
+2FA Schlüssel (optional) | Schlüssel für die erzeugeung des OTP (Nicht den 6-Stelligen Zahlencode!)
 Server Überprüfen    | Prüft ob das Zertifikat zum Server passt
 Zertifikat Prüfen    | Prüft die Zertifikatskette (Bei selbstsigniertem Zertifikat deaktivieren)
 

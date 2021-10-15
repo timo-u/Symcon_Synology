@@ -10,7 +10,10 @@
             "Username": "Benutzername",
             "Password": "Passwort",
             "Verify Host": "Server Überprüfen",
-            "Verify Peer": "Zertifikat Prüfen"
+            "Verify Peer": "Zertifikat Prüfen",
+            "Create 2FA Code": "2FA Code erzeugen",
+            "2FA secret (optional)": "2FA Schlüssel (optional)",
+            "Invalide 2FA Code": "fehlerhafter 2FA Code"
         }
     }
 }
