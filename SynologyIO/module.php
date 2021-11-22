@@ -44,7 +44,82 @@ declare(strict_types=1);
             $this->SendDataToChildren(json_encode(['DataID' => '{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}', 'Buffer' => $Text]));
         }
 
-
+        public function Create2FACode()
+        {
+            $code = str_replace(' ', '', $this->ReadPropertyString('TwoFactorAuthCode'));
+            if ($code =="") {
+                $this->SendDebug('Create2FACode', 'Es wurde kein 2FA Code erzeugt', 0);
+                return false;
+            }
+            $timestamp = floor(microtime(true) / 30);
+            
+            $lut = [
+            'A' => 0,
+            'B' => 1,
+            'C' => 2,
+            'D' => 3,
+            'E' => 4,
+            'F' => 5,
+            'G' => 6,
+            'H' => 7,
+            'I' => 8,
+            'J' => 9,
+            'K' => 10,
+            'L' => 11,
+            'M' => 12,
+            'N' => 13,
+            'O' => 14,
+            'P' => 15,
+            'Q' => 16,
+            'R' => 17,
+            'S' => 18,
+            'T' => 19,
+            'U' => 20,
+            'V' => 21,
+            'W' => 22,
+            'X' => 23,
+            'Y' => 24,
+            'Z' => 25,
+            '2' => 26,
+            '3' => 27,
+            '4' => 28,
+            '5' => 29,
+            '6' => 30,
+            '7' => 31];
+            // Decode Base32 Seed
+            $b32 = strtoupper($code);
+            $n = $j = 0;
+            $key = '';
+            if (!preg_match('/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]+$/', $b32, $match)) {
+                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
+                $this->SetStatus(203);
+                return false;
+            }
+            for ($i = 0, $iMax = strlen($b32); $i < $iMax; $i++) {
+                $n <<= 5;              // Move buffer left by 5 to make room
+            $n += $lut[$b32[$i]]; // Add value into buffer
+            $j += 5;              // Keep track of number of bits in buffer
+            if ($j >= 8) {
+                $j -= 8;
+                $key .= chr(($n & (0xFF << $j)) >> $j);
+            }
+            }
+            // Check Binary Key
+            if (strlen($key) < 8) {
+                trigger_error('Secret key is too short. Must be at least 16 base 32 characters');
+                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
+                $this->SetStatus(203);
+                return null;
+            }
+            // Generate OTA Code based on Seed and Current Timestamp
+        $h = hash_hmac('sha1', pack('N*', 0) . pack('N*', $timestamp), $key, true);  // NOTE: Counter must be 64-bit int
+        $o = ord($h[19]) & 0xf;
+            $ota_code =
+            (((ord($h[$o + 0]) & 0x7f) << 24) | ((ord($h[$o + 1]) & 0xff) << 16) | ((ord($h[$o + 2]) & 0xff) << 8) | (ord($h[$o + 3]) & 0xff)) % (10
+                ** 6);
+            $this->SendDebug('Create2FACode', "OTP-Code: ".$ota_code, 0);
+            return  $ota_code;
+        }
         public function Login(bool $force = false)
         {
             if (!$this->ReadPropertyBoolean('Active')) {
@@ -52,8 +127,11 @@ declare(strict_types=1);
             }
 
             if ($this->GetBuffer('Authentication')=='failed' && !$force) {
+                $this->SendDebug('Login()', 'Authentication has failed - Login is blocked!', 0);
                 return false;
             }
+            
+            $this->SendDebug('Login()', 'Try to log in', 0);
 
             $username = urlencode($this->ReadPropertyString('Username'));
             $password = urlencode($this->ReadPropertyString('Password'));
@@ -111,8 +189,10 @@ declare(strict_types=1);
             if ($success) {
                 $this->SetStatus(102);
                 $this->SetBuffer('SessionId', $data->data->sid);
+                $this->SetBuffer('Authentication', '');
             } else {
                 $this->SendDebug('Login()', 'Authentication failed', 0);
+                $this->SendDebug('Login()', 'Code:' . $data->error->code, 0);
                 if ($data->error->code==400) {
                     $this->SendDebug('Login()', 'No such account or incorrect password.', 0);
                 }
@@ -150,49 +230,7 @@ declare(strict_types=1);
             return $success;
         }
 
-        public function Create2FACode()
-        {
-            $code = str_replace(' ', '', $this->ReadPropertyString('TwoFactorAuthCode'));
-            if ($code =="") {
-                $this->SendDebug('Create2FACode', 'Kein Secret eingegeben. Es wurde kein 2FA Code erzeugt', 0);
-                return false;
-            }
-            $timestamp = floor(microtime(true) / 30);
-            
-            $lut = [ 'A' => 0, 'B' => 1,'C' => 2,'D' => 3, 'E' => 4,'F' => 5,'G' => 6,'H' => 7, 'I' => 8,  'J' => 9, 'K' => 10,'L' => 11,'M' => 12,'N' => 13,
-            'O' => 14,'P' => 15, 'Q' => 16, 'R' => 17, 'S' => 18, 'T' => 19, 'U' => 20, 'V' => 21,'W' => 22,'X' => 23,'Y' => 24,'Z' => 25,'2' => 26,'3' => 27,
-            '4' => 28,'5' => 29,'6' => 30,'7' => 31];
-            // Decode Base32 Seed
-            $b32 = strtoupper($code);
-            $n = $j = 0;
-            $key = '';
-            if (!preg_match('/^[ABCDEFGHIJKLMNOPQRSTUVWXYZ234567]+$/', $b32, $match)) {
-                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
-                $this->SetStatus(203);
-                return false;
-            }
-            for ($i = 0, $iMax = strlen($b32); $i < $iMax; $i++) {
-                $n <<= 5;
-                $n += $lut[$b32[$i]];
-                $j += 5;
-                if ($j >= 8) {
-                    $j -= 8;
-                    $key .= chr(($n & (0xFF << $j)) >> $j);
-                }
-            }
-            
-            if (strlen($key) < 8) {
-                $this->SendDebug('Create2FACode', 'Invalid characters in the base32 string.', 0);
-                $this->SetStatus(203);
-                return null;
-            }
-            
-            $h = hash_hmac('sha1', pack('N*', 0) . pack('N*', $timestamp), $key, true);  
-            $o = ord($h[19]) & 0xf;
-            $ota_code = (((ord($h[$o + 0]) & 0x7f) << 24) | ((ord($h[$o + 1]) & 0xff) << 16) | ((ord($h[$o + 2]) & 0xff) << 8) | (ord($h[$o + 3]) & 0xff)) % (10 ** 6);
-            $this->SendDebug('Create2FACode', "TOTP-Code: ".$ota_code, 0);
-            return  $ota_code;
-        }
+
 
         public function GetMaxVersion(string $api, string $possibleVersions)
         {
@@ -317,14 +355,12 @@ declare(strict_types=1);
                                 );
 
             */
-            $this->SendDebug('ApiCall', '1', 0);
+            
             if ($parameter == null || !array_key_exists('subpath', $parameter)|| !array_key_exists('getparameter', $parameter)) {
                 $this->SendDebug('ApiCall()', 'Fehlerhafte Parameter', 0);
                 return false;
             }
             
-
-
 
             $subpath = $parameter['subpath'];
             $GetParameter = $parameter['getparameter'];
@@ -334,12 +370,15 @@ declare(strict_types=1);
             if (!$this->ReadPropertyBoolean('Active')) {
                 return false;
             }
-            
+                      
 
             if (!(array_key_exists('auth', $parameter) && $parameter['auth'] == false)) {
                 $sessionId = $this->GetBuffer('SessionId');
+                $this->SendDebug('ApiCall', 'Step4'.$sessionId, 0);
                 if ($sessionId == "") {
+                    $this->SendDebug('ApiCall', '->Login', 0);
                     if ($this->Login()) {
+                        $this->SendDebug('ApiCall', 'Login Succsessfull', 0);
                         $sessionId = $this->GetBuffer('SessionId');
                     } else {
                         return false;
@@ -349,7 +388,6 @@ declare(strict_types=1);
             }
             
             
-            $this->SendDebug('ApiCall', '5', 0);
             if ($this->ReadPropertyBoolean('VerifyHost')) {
                 $verifyhost = 2;
             } else {
@@ -393,9 +431,16 @@ declare(strict_types=1);
             if ($response==null || $response =="") {
                 return false;
             }
-
+            
             $data = json_decode($response);
 
+            if (property_exists($data, 'error') && property_exists($data->error, 'code')) {
+                if ($data->error->code == 119) { // Invalid session
+                    $this->SetBuffer('SessionId', ""); // Session-ID entfernen, dadurch wird beim nächsten versuch neu angemeldet
+                    $this->SendDebug('ApiCall()', 'Invalid session', 0);
+                }
+            }
+            
             $data =json_encode(array("apidata" => $data, "apierror" => $err, "apiparameter" => $parameter, "url" => $url ));
            
             $this->SendDebug('ApiCall()', 'Response:' . $data, 0);
