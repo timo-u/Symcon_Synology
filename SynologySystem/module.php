@@ -211,8 +211,8 @@ declare(strict_types=1);
             $this->MaintainVariable('State', $this->Translate('State'), 0, 'SYNO_Online', 1, true);
             $this->MaintainVariable('CpuLoad5Min', $this->Translate('CPU 5 min load'), 2, 'SYNO_Percent', 2, true);
             $this->MaintainVariable('MemoryPercent', $this->Translate('Memory Percent'), 2, 'SYNO_Percent', 3, true);
-            $this->MaintainVariable('NetworkTotalRx', $this->Translate('Network Total Rx'), 2, 'SYNO_Mbps', 4, true);
-            $this->MaintainVariable('NetworkTotalTx', $this->Translate('Network Total Tx'), 2, 'SYNO_Mbps', 5, true);
+            $this->MaintainVariable('NetworkTotalRx', $this->Translate('Network Total Rx'), 2, 'SYNO_MBs', 4, true);
+            $this->MaintainVariable('NetworkTotalTx', $this->Translate('Network Total Tx'), 2, 'SYNO_MBs', 5, true);
             //UpdateSystemStatus
             $this->MaintainVariable('SystemCrashed', $this->Translate('System Crashed'), 0, 'SYNO_Fault', 10, true);
             $this->MaintainVariable('UpgradeReady', $this->Translate('Upgrade Ready'), 0, '~Alert', 41, true);
@@ -241,11 +241,11 @@ declare(strict_types=1);
                 IPS_SetVariableProfileValues('SYNO_Percent', 0, 100, 0.1);
             }
 
-            if (!IPS_VariableProfileExists('SYNO_Mbps')) {
-                IPS_CreateVariableProfile('SYNO_Mbps', 2);
-                IPS_SetVariableProfileDigits('SYNO_Mbps', 1);
-                IPS_SetVariableProfileText('SYNO_Mbps', '', ' MBit/s');
-                IPS_SetVariableProfileValues('SYNO_Mbps', 0, 1000, 0.1);
+            if (!IPS_VariableProfileExists('SYNO_MBs')) {
+                IPS_CreateVariableProfile('SYNO_MBs', 2);
+                IPS_SetVariableProfileDigits('SYNO_MBs', 1);
+                IPS_SetVariableProfileText('SYNO_MBs', '', ' MByte/s');
+                IPS_SetVariableProfileValues('SYNO_MBs', 0, 1000, 0.1);
             }
 
             if (!IPS_VariableProfileExists('SYNO_Fault')) {
