@@ -131,7 +131,80 @@ declare(strict_types=1);
             return false;
         }
 
-     
+		public function SetHomeMode(bool $state)
+		{
+			$version = $this->GetMaxVersion("SYNO.SurveillanceStation.HomeMode", "1");
+
+
+			$on = $state ? 'true' : 'false';
+
+            $parameter = array( "subpath" => "/webapi/entry.cgi",
+                                "getparameter"=> array("api=SYNO.SurveillanceStation.HomeMode",
+                                                        "version=".$version,
+                                                        "method=Switch",
+														"on=".$on)
+                                   );
+
+            $returnvalue= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
+
+            
+            if ($returnvalue == false) {
+                return false;
+            }
+            $data = json_decode($returnvalue);
+
+            $this->SendDebug('Update', 'data: '. json_encode($data), 0);
+			
+			if (property_exists($data, 'apidata')
+                    && 	property_exists($data->apidata, 'data')
+                    && 	property_exists($data, 'success')
+					&& $data->apidata->success ){
+                return true;
+			}
+			return false;
+
+
+		}
+		
+		public function SetRecording(int $cameraid, bool $record)
+		{
+			 $version = $this->GetMaxVersion("SYNO.SurveillanceStation.ExternalRecording", "1");
+
+			if($record)
+				$action = "start";
+			else
+				$action = "stop";
+			
+            $parameter = array( "subpath" => "/webapi/entry.cgi",
+                                "getparameter"=> array("api=SYNO.SurveillanceStation.ExternalRecording",
+                                                        "version=".$version,
+                                                        "method=Record",
+														"cameraId=".$cameraid,
+														"action=".$action
+														)
+                                   );
+
+            $returnvalue= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
+
+            
+            if ($returnvalue == false) {
+                return false;
+            }
+            $data = json_decode($returnvalue);
+
+            $this->SendDebug('Update', 'data: '. json_encode($data), 0);
+			
+			if (property_exists($data, 'apidata')
+                    && 	property_exists($data->apidata, 'data')
+                    && 	property_exists($data, 'success')
+					&& $data->apidata->success){
+                return true;
+			}
+			return false;
+		}
+	 
+	 
+	 
         private function CreateVariableProfile()
         {
             $this->SendDebug('RegisterVariableProfiles()', 'RegisterVariableProfiles()', 0);
