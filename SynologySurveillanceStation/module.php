@@ -156,8 +156,7 @@ declare(strict_types=1);
             $this->SendDebug('Update', 'data: '. json_encode($data), 0);
 			
 			if (property_exists($data, 'apidata')
-                    && 	property_exists($data->apidata, 'data')
-                    && 	property_exists($data, 'success')
+                    && 	property_exists($data->apidata, 'success')
 					&& $data->apidata->success ){
                 return true;
 			}
@@ -195,9 +194,8 @@ declare(strict_types=1);
             $this->SendDebug('Update', 'data: '. json_encode($data), 0);
 			
 			if (property_exists($data, 'apidata')
-                    && 	property_exists($data->apidata, 'data')
-                    && 	property_exists($data, 'success')
-					&& $data->apidata->success){
+                    && 	property_exists($data->apidata, 'success')
+					&& $data->apidata->success ){
                 return true;
 			}
 			return false;
