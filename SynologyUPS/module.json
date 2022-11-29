@@ -1,0 +1,16 @@
+{
+    "id": "{846DBFDC-7BAE-4F37-AA06-7647541B9B9A}",
+    "name": "SynologyUPS",
+    "type": 3,
+    "vendor": "Synology",
+    "aliases": ["Synology UPS"],
+    "parentRequirements": [
+        "{59B36CB0-EF4D-D794-FED4-89C69D410CDD}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}"
+    ],
+    "prefix": "SYNOUPS",
+    "url": "https://github.com/timo-u/Symcon_Synology/tree/main/SynologyUPS"
+}
