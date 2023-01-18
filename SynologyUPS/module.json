@@ -3,7 +3,9 @@
     "name": "SynologyUPS",
     "type": 3,
     "vendor": "Synology",
-    "aliases": ["Synology UPS"],
+    "aliases": [
+        "Synology UPS"
+    ],
     "parentRequirements": [
         "{59B36CB0-EF4D-D794-FED4-89C69D410CDD}"
     ],
