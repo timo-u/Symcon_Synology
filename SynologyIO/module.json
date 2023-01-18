@@ -3,7 +3,9 @@
     "name": "SynologyIO",
     "type": 1,
     "vendor": "Synology",
-    "aliases": ["Synology IO"],
+    "aliases": [
+        "Synology IO"
+    ],
     "parentRequirements": [],
     "childRequirements": [
         "{43456771-9080-F6F1-AC09-ADCF5DEE6FEA}"

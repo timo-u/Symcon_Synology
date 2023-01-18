@@ -1,3 +1,4 @@
+
 # SynologyUPS
 Auslesen der USV / UPS Parameter aus einem Synology NAS.
 
