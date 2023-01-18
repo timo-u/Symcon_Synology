@@ -74,6 +74,59 @@ class SynologySystem extends IPSModule
 
         return false;
     }
+
+     public function Reboot()
+     {
+         $parameter = array( "subpath" => "/webapi/entry.cgi",
+         "getparameter"=> array( "api=SYNO.Core.System",
+                                 "version=1",
+                                 "method=reboot")
+         );
+
+         $returnvalue= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
+         $this->SendDebug('Reboot', "returnvalue: " . utf8_decode($returnvalue), 0);
+
+         $data = json_decode($returnvalue);
+         if ($data == false) {
+             return false;
+         }
+         $this->SendDebug('Reboot', 'data: '. json_encode($data), 0);
+
+         if (property_exists($data, 'apidata')
+                 && 	property_exists($data->apidata, 'data')
+                 && 	property_exists($data, 'apiparameter')) {
+             return $data->apidata->success;
+         }
+         return false;
+     }
+
+    public function Shutdown()
+    {
+        $parameter = array( "subpath" => "/webapi/entry.cgi",
+        "getparameter"=> array( "api=SYNO.Core.System",
+                                "version=1",
+                                "method=shutdown")
+        );
+
+        $returnvalue= $this->SendDataToParent(json_encode(['DataID' => '{59B36CB0-EF4D-D794-FED4-89C69D410CDD}','Parameter'=>$parameter]));
+        $this->SendDebug('Shutdown', "returnvalue: " . utf8_decode($returnvalue), 0);
+
+        $data = json_decode($returnvalue);
+
+        if ($data == false) {
+            return false;
+        }
+        $this->SendDebug('Shutdown', 'data: '. json_encode($data), 0);
+
+        if (property_exists($data, 'apidata')
+                && 	property_exists($data->apidata, 'data')
+                && 	property_exists($data, 'apiparameter')) {
+            return $data->apidata->success;
+        }
+
+        return false;
+    }
+
     private function UpdateSystemStatus()
     {
         $version = $this->GetMaxVersion("SYNO.Core.System.Status", "1");
