@@ -3,13 +3,17 @@ Auslesen der Sytemparameter aus einem Synology NAS.
 
 ### Inhaltsverzeichnis
 
-1. [Funktionsumfang](#1-funktionsumfang)
-2. [Voraussetzungen](#2-voraussetzungen)
-3. [Software-Installation](#3-software-installation)
-4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
-5. [Statusvariablen und Profile](#5-statusvariablen-und-profile)
-6. [WebFront](#6-webfront)
-7. [PHP-Befehlsreferenz](#7-php-befehlsreferenz)
+- [SynologySystem](#synologysystem)
+		- [Inhaltsverzeichnis](#inhaltsverzeichnis)
+		- [1. Funktionsumfang](#1-funktionsumfang)
+		- [2. Vorraussetzungen](#2-vorraussetzungen)
+		- [3. Software-Installation](#3-software-installation)
+		- [4. Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
+		- [5. Statusvariablen und Profile](#5-statusvariablen-und-profile)
+			- [Statusvariablen](#statusvariablen)
+			- [Profile](#profile)
+		- [6. WebFront](#6-webfront)
+		- [7. PHP-Befehlsreferenz](#7-php-befehlsreferenz)
 
 ### 1. Funktionsumfang
 
@@ -87,3 +91,17 @@ Manuelles Akktualisieren der Instanz.
 
 Beispiel:
 `SYNOSYS_Update(12345);`
+
+
+`boolean SYNOSYS_Shutdown(integer $InstanzID);`
+Herunterfahren des NAS.
+
+Beispiel:
+`SYNOSYS_Shutdown(12345);`
+
+
+`boolean SYNOSYS_Reboot(integer $InstanzID);`
+Neustart des NAS.
+
+Beispiel:
+`SYNOSYS_Reboot(12345);`
