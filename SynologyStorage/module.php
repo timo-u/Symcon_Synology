@@ -68,7 +68,7 @@ class SynologyStorage extends IPSModule
                         $description =$storagePool->id;
                     }
                     $this->MaintainVariable($ident, $this->Translate('StoragePool').": " . $description, 3, "", $pos++, true);
-                    $this->SetValue($ident, $storagePool->status);
+                    $this->SetValue($ident, $this->Translate($storagePool->status));
                 }
             }
 
@@ -90,7 +90,7 @@ class SynologyStorage extends IPSModule
                     }
 
                     $this->MaintainVariable("Volume".$ident, $this->Translate('Volume').": " . $description, 3, "", $pos++, true);
-                    $this->SetValue("Volume".$ident, $volume->status);
+                    $this->SetValue("Volume".$ident, $this->Translate($volume->status));
 
                     $this->MaintainVariable("VolumePercent".$ident, $this->Translate('Volume').": " . $description . " (".$this->Translate('used').")", 2, "SYNO_Percent", $pos++, true);
                     $this->SetValue("VolumePercent".$ident, ($volume->size->used/$volume->size->total)*100);

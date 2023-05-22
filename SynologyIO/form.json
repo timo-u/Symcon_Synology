@@ -16,6 +16,11 @@
 			"name": "Username",
 			"caption": "Username"
 		},
+		{ 
+			"type": "Label",
+			"caption": "(The user must have administration privileges)",
+			"color": "FF0000"
+		},
 		{
 			"type": "PasswordTextBox",
 			"name": "Password",

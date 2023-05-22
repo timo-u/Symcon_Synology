@@ -3,7 +3,7 @@
         "de": {
             "StoragePool": "Speicherpool",
             "Volume": "Laufwerk",
-            "Offline": "benutzt",
+            "Offline": "Offline",
             "Online": "Online",
             "used": "benutzt",
             "disabled": "deaktiviert",
@@ -15,7 +15,10 @@
             "15 minutes": "15 Minuten",
             "30 minutes": "30 Minuten",
             "60 minutes": "60 Minuten",
-            "Update Interval": "Aktualisierungsintervall"
+            "Update Interval": "Aktualisierungsintervall",
+			"normal": "normal",
+			"attention": "Achtung",
+            "has_unverified_disk": "hat_ungeprüfte_Platte"
         }
     }
 }

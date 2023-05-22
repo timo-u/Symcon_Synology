@@ -223,6 +223,8 @@ class SynologyIO extends IPSModule
             if ($data->error->code==410) {
                 $this->SendDebug('Login()', 'Password must be changed', 0);
             }
+			$this->LogMessage('Login()', 'Code:' . $data->error->code, KL_ERROR);
+
             $this->SetBuffer('Authentication', 'failed');
             $this->SetStatus(202); // Authentication failed
         }
@@ -374,7 +376,7 @@ class SynologyIO extends IPSModule
 
         if (!(array_key_exists('auth', $parameter) && $parameter['auth'] == false)) {
             $sessionId = $this->GetBuffer('SessionId');
-            $this->SendDebug('ApiCall', 'Step4'.$sessionId, 0);
+            $this->SendDebug('ApiCall', 'SessionId: '.$sessionId, 0);
             if ($sessionId == "") {
                 $this->SendDebug('ApiCall', '->Login', 0);
                 if ($this->Login()) {
@@ -419,12 +421,13 @@ class SynologyIO extends IPSModule
         $response = curl_exec($curl);
         $err = curl_error($curl);
 
-        $this->SendDebug('ApiCall()', 'Response:' . $response, 0);
-        $this->SendDebug('ApiCall()', 'Error:' . $err, 0);
+        $this->SendDebug('ApiCall()', 'Response: ' . $response, 0);
+        
 
         curl_close($curl);
 
         if ($err) {
+            $this->SendDebug('ApiCall()', 'Error: ' . $err, 0);
             return false;
         }
 
