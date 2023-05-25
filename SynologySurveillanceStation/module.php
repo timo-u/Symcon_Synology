@@ -64,7 +64,7 @@ class SynologySurveillanceStation extends IPSModule
 
     private function toIdentName($input)
     {
-        return preg_replace('/[^A-Za-z0-9\_]/', '', $input);
+        return preg_replace('/[^A-Za-z0-9\_]/', '', strval($input));
     }
 
     public function ReceiveData($JSONString)

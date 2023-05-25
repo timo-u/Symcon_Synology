@@ -223,7 +223,7 @@ class SynologyIO extends IPSModule
             if ($data->error->code==410) {
                 $this->SendDebug('Login()', 'Password must be changed', 0);
             }
-			$this->LogMessage('Login()', 'Code:' . $data->error->code, KL_ERROR);
+			$this->LogMessage('Synology IO =>Login() => Code:' . $data->error->code, KL_ERROR);
 
             $this->SetBuffer('Authentication', 'failed');
             $this->SetStatus(202); // Authentication failed
